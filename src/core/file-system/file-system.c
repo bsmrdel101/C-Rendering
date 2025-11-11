@@ -46,3 +46,48 @@ cJSON* read_file(char *path) {
   free(buffer);
   return json;
 }
+
+GameObject parse_game_object(cJSON *json) {
+  cJSON *idJson = cJSON_GetObjectItemCaseSensitive(json, "id");
+  cJSON *nameJson = cJSON_GetObjectItemCaseSensitive(json, "name");
+  cJSON *spriteJson = cJSON_GetObjectItemCaseSensitive(json, "sprite");
+  cJSON *rotationJson = cJSON_GetObjectItemCaseSensitive(json, "rotation");
+  cJSON *activeJson = cJSON_GetObjectItemCaseSensitive(json, "active");
+  cJSON *rectJson = cJSON_GetObjectItemCaseSensitive(json, "rect");
+  cJSON *xJson = cJSON_GetObjectItemCaseSensitive(rectJson, "x");
+  cJSON *yJson = cJSON_GetObjectItemCaseSensitive(rectJson, "y");
+  cJSON *wJson = cJSON_GetObjectItemCaseSensitive(rectJson, "w");
+  cJSON *hJson = cJSON_GetObjectItemCaseSensitive(rectJson, "h");
+  SDL_FRect rect = { .x = xJson->valuedouble, .y = yJson->valuedouble, .w = wJson->valuedouble, .h = hJson->valuedouble };
+
+  cJSON *tagsJson = cJSON_GetObjectItemCaseSensitive(json, "tags");
+  char **tags = malloc(sizeof(char*) * (cJSON_GetArraySize(tagsJson) + 1));
+  for (int i = 0; i < cJSON_GetArraySize(tagsJson); i++) {
+    cJSON *item = cJSON_GetArrayItem(tagsJson, i);
+    tags[i] = item->valuestring;
+  }
+
+  cJSON *shapeJson = cJSON_GetObjectItemCaseSensitive(json, "shape");
+  cJSON *typeJson = cJSON_GetObjectItemCaseSensitive(shapeJson, "type");
+  cJSON *colorJson = cJSON_GetObjectItemCaseSensitive(shapeJson, "color");
+  u8 colorValues[4] = {0, 0, 0, 255};
+  for (int i = 0; i < cJSON_GetArraySize(colorJson); i++) {
+    cJSON *item = cJSON_GetArrayItem(colorJson, i);
+    colorValues[i] = (u8)item->valueint;
+  }
+  Shape shape;
+  shape.type = typeJson->valuestring;
+  memcpy(shape.color, colorValues, sizeof(shape.color));
+  free(tags);
+
+  return (GameObject){ 
+    .id = idJson->valueint,
+    .name = nameJson->valuestring,
+    .tags = tags,
+    .sprite = spriteJson->valuestring,
+    .shape = shape,
+    .rect = rect,
+    .rotation = rotationJson->valuedouble,
+    .active = (bool)activeJson->valueint
+  };
+}

@@ -89,30 +89,13 @@ void draw_frame() {
   load_img("assets/sprites/background.png", NULL, &bgTransform);
 
   // Sprites
-  cJSON *json = read_file("resources/game-objects.json");
+  cJSON *json = read_file("resources/game/game-objects.json");
   for (int i = 0; i < cJSON_GetArraySize(json); i++) {
     cJSON *obj = cJSON_GetArrayItem(json, i);
     if (!cJSON_IsObject(obj)) continue;
 
-    cJSON *rectJson = cJSON_GetObjectItemCaseSensitive(obj, "rect");
-    cJSON *xJson = cJSON_GetObjectItemCaseSensitive(rectJson, "x");
-    cJSON *yJson = cJSON_GetObjectItemCaseSensitive(rectJson, "y");
-    cJSON *wJson = cJSON_GetObjectItemCaseSensitive(rectJson, "w");
-    cJSON *hJson = cJSON_GetObjectItemCaseSensitive(rectJson, "h");
-    cJSON *shapeJson = cJSON_GetObjectItemCaseSensitive(obj, "shape");
-    cJSON *typeJson = cJSON_GetObjectItemCaseSensitive(shapeJson, "type");
-    cJSON *colorJson = cJSON_GetObjectItemCaseSensitive(shapeJson, "color");
-    u8 colorValues[4] = {0, 0, 0, 255};
-    for (int c = 0; c < cJSON_GetArraySize(colorJson); c++) {
-      cJSON *item = cJSON_GetArrayItem(colorJson, c);
-      colorValues[c] = (u8)item->valueint;
-    }
-
-    Shape shape;
-    shape.type = typeJson->valuestring;
-    memcpy(shape.color, colorValues, sizeof(shape.color));
-    SDL_FRect rect = { .x = xJson->valuedouble, .y = yJson->valuedouble, .w = wJson->valuedouble, .h = hJson->valuedouble };
-    draw_shape(shape, &rect);
+    GameObject gameObject = parse_game_object(obj);
+    draw_shape(gameObject.shape, &gameObject.rect);
   }
 
   SDL_RenderPresent(renderer);
