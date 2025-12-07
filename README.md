@@ -1,26 +1,28 @@
 ## Installation
-### VScode
-- Run `vcpkg install`
-- If you have unsupported image format errors try `vcpkg install 'sdl3-image[core,jpeg,png]' --recurse --triplet x64-windows`
-- Create `.vscode/c_cpp_properties.json` in the root dir if it doesn't exist already:
-```json
-{
-  "configurations": [
-    {
-      ...
-      "includePath": [
-        "${workspaceFolder}/**",
-        "C:/vcpkg/installed/x64-windows/include",
-        "C:/mingw64/include"
-      ],
-      ...
-    }
-  ],
-  "version": 4
-}
-```
 
 ## Getting Started
-- Run `make`
-- If you want to make a production build then run `make prod`
 
+If you're using vscode, go into your `settings.json` and add this line if it doesn't exist already:
+```json
+"cmake.configureSettings": {
+  "CMAKE_TOOLCHAIN_FILE": "${workspaceFolder}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+},
+```
+
+### Install SDL3
+Create an `external` directory inside the project root and download the following packages into there:
+- https://github.com/libsdl-org/SDL/releases
+- https://github.com/libsdl-org/SDL_image/releases
+- https://github.com/libsdl-org/SDL_ttf/releases
+- https://github.com/libsdl-org/SDL_mixer/releases
+
+### Add vcpkg to Root
+- `git clone https://github.com/microsoft/vcpkg.git`
+
+### Install Packages
+- `cd vcpkg`
+- `./bootstrap-vcpkg.sh`
+- `./vcpkg install`
+
+### Build and Run
+- `make`

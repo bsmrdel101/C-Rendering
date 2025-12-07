@@ -1,7 +1,6 @@
 #pragma once
 #include <stdint.h>
 #include <SDL3/SDL.h>
-#include <cJSON/cJSON.h>
 
 typedef int8_t i8;
 typedef int16_t i16;
@@ -31,7 +30,7 @@ typedef struct {
   SDL_FRect rect;
   i16 rotation;
   bool active;
-  cJSON components;
+  // cJSON components;
 } GameObject;
 
 

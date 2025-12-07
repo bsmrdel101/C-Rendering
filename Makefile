@@ -1,15 +1,24 @@
-all: dev run
+.PHONY: all clean build run
 
-dev:
-	cmake -B build/Debug -S . -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_MANIFEST_MODE=ON -DCMAKE_BUILD_TYPE=Debug
+all: run_dev
+
+build_dev:
+	mkdir -p build/Debug
+	cmake -S . -B build/Debug -DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Debug
 	cmake --build build/Debug --config Debug
 
-prod:
-	cmake -B build/Release -S . -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_MANIFEST_MODE=ON -DCMAKE_BUILD_TYPE=Release
+build_prod:
+	mkdir -p build/Release
+	cmake -S . -B build/Release -DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release
 	cmake --build build/Release --config Release
 
-run:
-	./build/Debug/app.exe
+run_dev: build_dev
+	clear
+	@./build/Debug/c-rendering
+
+run_prod: build_prod
+	clear
+	@./build/Release/c-rendering
 
 clean:
 	rm -rf build

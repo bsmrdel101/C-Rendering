@@ -1,25 +1,23 @@
-cmake_minimum_required(VERSION 3.10)
-project(C_RENDERING C)
+cmake_minimum_required(VERSION 3.26)
+project(c-rendering C)
 
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD 23)
+set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-set(CMAKE_PREFIX_PATH "C:/vcpkg/installed/x64-windows/share" CACHE STRING "")
+file(GLOB_RECURSE SOURCES "src/*.c")
+add_executable(c-rendering ${SOURCES})
 
-file(GLOB_RECURSE SOURCES src/*.c)
-add_executable(app ${SOURCES})
+add_subdirectory(external/SDL EXCLUDE_FROM_ALL)
+add_subdirectory(external/SDL_image EXCLUDE_FROM_ALL)
+add_subdirectory(external/SDL_ttf EXCLUDE_FROM_ALL)
+add_subdirectory(external/SDL_mixer EXCLUDE_FROM_ALL)
 
-include_directories(C:\\vcpkg\\installed\\x64-windows\\include)
-link_directories(C:\\vcpkg\\installed\\x64-windows\\lib)
-
-# Packages
-find_package(SDL3 REQUIRED CONFIG)
-find_package(SDL3_image REQUIRED CONFIG)
-find_package(cJSON CONFIG REQUIRED)
-
-target_link_libraries(app PRIVATE
+target_link_libraries(c-rendering PRIVATE
   SDL3::SDL3
-  $<IF:$<TARGET_EXISTS:SDL3_image::SDL3_image-shared>,SDL3_image::SDL3_image-shared,SDL3_image::SDL3_image-static>
-  cjson
+  SDL3_image::SDL3_image
+  SDL3_ttf::SDL3_ttf
+  SDL3_mixer::SDL3_mixer
 )
-
-set_target_properties(app PROPERTIES WIN32_EXECUTABLE TRUE)

@@ -1,14 +1,4 @@
 {
   "version": "1.0",
-  "dependencies": [
-    {
-      "name": "sdl3-image",
-      "features": [
-        "jpeg",
-        "png"
-      ]
-    },
-    "sdl3",
-    "cjson"
-  ]
+  "dependencies": []
 }
